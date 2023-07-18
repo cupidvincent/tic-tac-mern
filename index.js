@@ -1,4 +1,5 @@
 import express from 'express'
+import path from 'path'
 import dotenv from 'dotenv'
 
 dotenv.config();
@@ -7,7 +8,6 @@ import cookieParser from 'cookie-parser';
 import gameRoutes from './routes/gameRoute.js'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import connectDB from './config/db.js';
-import cors from 'cors';
 
 connectDB();
 
@@ -28,7 +28,15 @@ app.use(logRequests);
 
 app.use('/api/game',gameRoutes);
 
-app.get('/', (req, res) => res.send('Server is Ready'))
+if(process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, 'frontend/dist')));
+
+  app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html')))
+} else { 
+  app.get('/', (req, res) => res.send('Server is Ready'))
+}
+
 
 app.use(notFound);
 app.use(errorHandler);
