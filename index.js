@@ -28,7 +28,7 @@ app.use(logRequests);
 
 app.use('/api/game',gameRoutes);
 
-if(process.env.NODE_ENV === 'production') {
+if(process.env.TO === 'production') {
   const __dirname = path.resolve();
   app.use(express.static(path.join(__dirname, 'frontend/dist')));
 

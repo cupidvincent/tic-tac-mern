@@ -12,6 +12,7 @@ const generateToken = (res, dataId) => {
 
     res.cookie('jwt', token, {
         httpOnly: true,
+        // secure: process.env.NODE_ENV != 'development',
         secure: false, // i need to set this to false due to lacking of domain and thats an expense, i hope you understand
         sameSite: 'strict',
         maxAge: 30 * 24 * 60 * 1000
