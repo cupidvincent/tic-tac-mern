@@ -12,7 +12,7 @@ import { checkWinner, checDraw } from '../lib/CheckWinner';
 import GameModal from '../components/GameModal';
 import { createBoard } from '../lib/CheckWinner';
 import { resetBoard } from '../slices/boardSlice';
-import { useUpdateGAmeMutation } from '../slices/gameApiSlice';
+import { useUpdateGAmeMutation, useEndGameSessionMutation } from '../slices/gameApiSlice';
 
 
 export default function Game() {
@@ -20,6 +20,7 @@ export default function Game() {
     const { gameInfo } = useSelector((state) => state.auth)
     const { boardDatas } = useSelector((state) => state.board)
     const [updateGame, { isLoading } ] = useUpdateGAmeMutation()
+    const [endGameSession ] = useEndGameSessionMutation()
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const isXwon = checkWinner(boardDatas.playedBoard, 'X')
@@ -117,11 +118,19 @@ export default function Game() {
         }
     },[boardDatas, navigate])
 
-    const endGameNow = () => {
-        dispatch(clearBoard())
-        dispatch(endgame())
-        setInitialized(false)
-        navigate('/')
+    const endGameNow = async () => {
+        try {
+            const res = await endGameSession().unwrap();
+
+            if(res) {
+                dispatch(clearBoard())
+                dispatch(endgame())
+                setInitialized(false)
+                navigate('/')
+            }
+        } catch (error) {
+            toast.error(error.data.message || error.error)
+        }
     }
 
     const placeValue = (rowId, tileId) => {

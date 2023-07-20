@@ -24,11 +24,18 @@ export const gameApiSlice = apiSlice.injectEndpoints({
                 method: 'GET'
             })
         }),
+        endGameSession: builder.mutation({
+            query: () => ({
+                url: `${GAME_URL}/endgame`,
+                method: 'POST'
+            })
+        })
     })
 })
 
 export const {
     useCreateGameMutation,
     useUpdateGAmeMutation,
-    useGetGameHistoryMutation
+    useGetGameHistoryMutation,
+    useEndGameSessionMutation
 } = gameApiSlice;
